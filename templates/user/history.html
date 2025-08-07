@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block title %}My Bookings - Parkham{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1>Your Booking History</h1>
+        <p>Review all your past and current parking activities.</p>
+    </div>
+
+    <div class="action-buttons">
+        <a href="{{ url_for('user_dashboard') }}" class="btn btn-outline">Back to Dashboard</a>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number animate-count">{{ total_bookings }}</div>
+            <div class="stat-label">Total Bookings</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number animate-count">₹{{ "%.2f"|format(total_spent) }}</div>
+            <div class="stat-label">Total Spent</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number animate-count">{{ "%.1f"|format(total_hours) }}</div>
+            <div class="stat-label">Hours Parked</div>
+        </div>
+    </div>
+
+    {% if total_bookings > 0 %}
+        <div class="summary-charts">
+            <h3>Your Parking Summary</h3>
+            <div class="chart-container">
+                <div class="chart-item">
+                    <h4>Spending Over Time</h4>
+                    <div class="spending-chart">
+                        <div class="chart-bar-container">
+                            <div class="chart-bar-fill" style="height: {{ (total_spent / 100) * 50 }}px">
+                                <span class="chart-tooltip">₹{{ "%.2f"|format(total_spent) }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-item">
+                    <h4>Booking Activity</h4>
+                    <div class="activity-chart">
+                        {% set active_bookings = reservations|selectattr('status', 'eq', 'active')|list|length %}
+                        {% set completed_bookings = reservations|selectattr('status', 'eq', 'completed')|list|length %}
+                        <div class="bar-chart-activity">
+                            <div class="bar-item">
+                                <div class="bar-fill active-bar" style="height: {{ (active_bookings / total_bookings) * 100 if total_bookings > 0 else 0 }}%;"></div>
+                                <span class="bar-label">Active ({{ active_bookings }})</span>
+                            </div>
+                            <div class="bar-item">
+                                <div class="bar-fill completed-bar" style="height: {{ (completed_bookings / total_bookings) * 100 if total_bookings > 0 else 0 }}%;"></div>
+                                <span class="bar-label">Completed ({{ completed_bookings }})</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if reservations %}
+        <div class="history-section">
+            <h3>Detailed Booking Log</h3>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Parking Area</th>
+                            <th>Check-in</th>
+                            <th>Check-out</th>
+                            <th>Duration</th>
+                            <th>Cost</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for reservation in reservations %}
+                            <tr class="table-row-animate">
+                                <td>
+                                    <strong>{{ reservation.spot.lot.location_name }}</strong><br>
+                                    <small>{{ reservation.spot.lot.address }}</small>
+                                </td>
+                                <td>{{ reservation.in_time.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td>
+                                    {% if reservation.out_time %}
+                                        {{ reservation.out_time.strftime('%Y-%m-%d %H:%M') }}
+                                    {% else %}
+                                        <span class="text-muted">Currently Active</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if reservation.duration_hours > 0 %}
+                                        {{ reservation.duration_hours }}h
+                                    {% else %}
+                                        <span class="text-muted">N/A</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if reservation.total_cost %}
+                                        <strong>₹{{ "%.2f"|format(reservation.total_cost) }}</strong>
+                                    {% else %}
+                                        <span class="text-muted">Pending</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="status-badge status-{{ reservation.status }}">
+                                        {{ reservation.status.title() }}
+                                    </span>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <h4>No booking history found.</h4>
+            <p>Start booking parking spots to see your activity here!</p>
+            <a href="{{ url_for('user_dashboard') }}" class="btn btn-primary">Find Parking Now</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

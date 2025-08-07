@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Lot - Parkham Admin{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="form-card">
+        <div class="form-header">
+            <h2>Edit Parking Area</h2>
+            <p>Modify details for this parking location.</p>
+        </div>
+        
+        <form method="POST" class="admin-form">
+            <div class="form-group">
+                <div class="input-container">
+                    <input type="text" id="location_name" name="location_name" required 
+                       value="{{ lot.location_name }}" maxlength="200">
+                    <label for="location_name">Location Name:</label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <div class="input-container">
+                    <textarea id="address" name="address" required rows="3">{{ lot.address }}</textarea>
+                    <label for="address">Address:</label>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <div class="input-container">
+                        <input type="text" id="pincode" name="pincode" required 
+                           value="{{ lot.pincode }}" pattern="[0-9]{5,6}" maxlength="6">
+                        <label for="pincode">Pincode:</label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="input-container">
+                        <input type="number" id="price" name="price" required 
+                           value="{{ lot.price }}" min="1" max="1000" step="0.01">
+                        <label for="price">Price per Hour (₹):</label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-info">
+                <p><strong>Current Spots:</strong> {{ lot.max_spots }} ({{ lot.occupied_spots }} occupied, {{ lot.available_spots }} available)</p>
+                <small>Note: The total number of spots cannot be changed after creation.</small>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Update Lot</button>
+                <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline">Back to Dashboard</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

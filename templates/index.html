@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero-section bg-primary text-white py-5 mb-5">
+    <div class="container text-center py-5">
+        <h1 class="display-4 fw-bold">Welcome to Parkham</h1>
+        <p class="lead">Your seamless parking experience starts here.</p>
+        <div class="mt-4">
+            <a href="{{ url_for('user_login') }}" class="btn btn-light btn-lg mx-2">User Access</a>
+            <a href="{{ url_for('user_register') }}" class="btn btn-outline-light btn-lg mx-2">Join Us</a>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-header-image admin-tools-header">
+                    <i class="bi bi-shield-lock fs-1 text-white mb-3"></i>
+                </div>
+                <div class="card-body text-center">
+                    <h3>Admin Tools</h3>
+                    <p>Take control! Easily manage parking areas, track bookings, and keep an eye on everything happening in your system.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-header-image park-ease-header">
+                    <i class="bi bi-car-front fs-1 text-white mb-3"></i>
+                </div>
+                <div class="card-body text-center">
+                    <h3>Park with Ease</h3>
+                    <p>No more circling! Quickly find and reserve your perfect parking spot with our super simple interface.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-header-image stay-informed-header">
+                    <i class="bi bi-graph-up fs-1 text-white mb-3"></i>
+                </div>
+                <div class="card-body text-center">
+                    <h3>Stay Informed</h3>
+                    <p>Get the full picture! See your parking history, how busy lots are, and all your payment info at a glance.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-lg-12 text-center">
+            <h2 class="fw-bold mb-4">Why Choose Parkham?</h2>
+            <p class="lead">
+                Parkham is designed to make parking effortless for everyone. Whether you're a driver looking for a spot or an administrator managing a lot, we've got you covered.
+            </p>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h3 class="card-title text-center mb-3">For Drivers</h3>
+                    <ul class="list-unstyled">
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i> Find available spots in real-time.</li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i> Reserve your parking with ease.</li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i> Secure and convenient booking process.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h3 class="card-title text-center mb-3">For Administrators</h3>
+                    <ul class="list-unstyled">
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i> Oversee all parking operations.</li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i> Manage users and parking lots efficiently.</li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i> Access insightful reports and analytics.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

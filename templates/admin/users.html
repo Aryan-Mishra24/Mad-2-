@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Users - Parkham Admin{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1>Registered Users</h1>
+        <p>View and manage all registered Parkham users.</p>
+    </div>
+
+    <div class="action-buttons">
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline">Back to Dashboard</a>
+    </div>
+
+    {% if users %}
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">{{ users|length }}</div>
+                <div class="stat-label">Total Users</div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>User ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Pincode</th>
+                        <th>Joined On</th>
+                        <th>Total Bookings</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr class="table-row-animate">
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.name }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.pincode }}</td>
+                            <td>{{ user.created_at.strftime('%Y-%m-%d') }}</td>
+                            <td>{{ user.reservations|length }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <h4>No users registered yet.</h4>
+            <p>New users will appear here once they join Parkham.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

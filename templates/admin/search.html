@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Search Parkham - Admin{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1>Search Parkham</h1>
+        {% if query %}
+            <p>Showing results for: "{{ query }}"</p>
+        {% endif %}
+    </div>
+
+    <div class="action-buttons">
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline">Back to Dashboard</a>
+    </div>
+
+    <div class="search-container">
+        <form method="GET" action="{{ url_for('admin_search') }}" class="search-form">
+            <input type="text" name="q" value="{{ query }}" placeholder="Search by location or pincode..." class="search-input">
+            <button type="submit" class="btn btn-outline">Search</button>
+        </form>
+    </div>
+
+    {% if query %}
+        {% if lots %}
+            <div class="lots-grid">
+                {% for lot in lots %}
+                    <div class="lot-card">
+                        <div class="lot-header">
+                            <h4>{{ lot.location_name }}</h4>
+                            <div class="lot-occupancy">
+                                {{ lot.occupied_spots }}/{{ lot.max_spots }}
+                            </div>
+                        </div>
+                        
+                        <div class="lot-info">
+                            <p><strong>Address:</strong> {{ lot.address }}</p>
+                            <p><strong>Pincode:</strong> {{ lot.pincode }}</p>
+                            <p><strong>Price:</strong> ${{ lot.price }}/hour</p>
+                        </div>
+                        
+                        <div class="lot-actions">
+                            <a href="{{ url_for('admin_edit_lot', lot_id=lot.id) }}" class="btn btn-small btn-secondary">Edit Lot</a>
+                            {% if lot.occupied_spots == 0 %}
+                                <a href="{{ url_for('admin_delete_lot', lot_id=lot.id) }}" 
+                                   class="btn btn-small btn-danger"
+                                   onclick="return confirm('Are you sure you want to remove this parking lot?')">Remove Lot</a>
+                            {% else %}
+                                <span class="btn btn-small btn-disabled">Cannot Remove</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <h4>No results found.</h4>
+                <p>Try searching with different keywords.</p>
+            </div>
+        {% endif %}
+    {% else %}
+        <div class="empty-state">
+            <h4>Start your search.</h4>
+            <p>Find parking areas by location name or pincode.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

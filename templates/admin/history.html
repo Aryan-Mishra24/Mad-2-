@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Booking History - Parkham Admin{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1>Booking History</h1>
+        <p>Review all parking bookings and transactions.</p>
+    </div>
+
+    <div class="action-buttons">
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline">Back to Dashboard</a>
+    </div>
+
+    {% if reservations %}
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">{{ reservations|length }}</div>
+                <div class="stat-label">Total Reservations</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ reservations|selectattr('status', 'eq', 'active')|list|length }}</div>
+                <div class="stat-label">Active</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ reservations|selectattr('status', 'eq', 'completed')|list|length }}</div>
+                <div class="stat-label">Completed</div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>User</th>
+                        <th>Parking Area</th>
+                        <th>Spot</th>
+                        <th>Check-in</th>
+                        <th>Check-out</th>
+                        <th>Duration</th>
+                        <th>Cost</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reservation in reservations %}
+                        <tr class="table-row-animate">
+                            <td>{{ reservation.id }}</td>
+                            <td>{{ reservation.user.name }}</td>
+                            <td>{{ reservation.spot.lot.location_name }}</td>
+                            <td>{{ reservation.spot_id }}</td>
+                            <td>{{ reservation.in_time.strftime('%Y-%m-%d %H:%M') }}</td>
+                            <td>
+                                {% if reservation.out_time %}
+                                    {{ reservation.out_time.strftime('%Y-%m-%d %H:%M') }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if reservation.duration_hours > 0 %}
+                                    {{ reservation.duration_hours }}h
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if reservation.total_cost %}
+                                ₹{{ "%.2f"|format(reservation.total_cost) }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="status-badge status-{{ reservation.status }}">
+                                    {{ reservation.status.title() }}
+                                </span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <h4>No booking history available.</h4>
+            <p>All completed and active bookings will appear here.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

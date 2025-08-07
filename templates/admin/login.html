@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Access - Parkham{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h2>Admin Portal</h2>
+            <p>Log in to manage Parkham operations.</p>
+        </div>
+        
+        <form method="POST" class="auth-form">
+            <div class="form-group">
+                <div class="input-container">
+                    <input type="email" id="email" name="email" required>
+                    <label for="email">Email:</label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <div class="input-container">
+                    <input type="password" id="password" name="password" required>
+                    <label for="password">Password:</label>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-full">Secure Login</button>
+        </form>
+        
+        
+    </div>
+</div>
+{% endblock %}

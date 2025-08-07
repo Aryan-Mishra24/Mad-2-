@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}My Parkham - Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1>Welcome, {{ session.user_name }}!</h1>
+        <p>Find and manage your parking with ease.</p>
+    </div>
+
+    {% if active_reservations %}
+        <div class="active-reservations mb-5">
+            <h3>Your Active Bookings</h3>
+            <div class="reservations-grid">
+                {% for reservation in active_reservations %}
+                    <div class="reservation-card active">
+                        <div class="reservation-header">
+                            <h4>{{ reservation.spot.lot.location_name }}</h4>
+                            <span class="badge bg-success">Active</span>
+                        </div>
+                        <div class="reservation-info">
+                            <p><i class="bi bi-geo-alt"></i> <strong>Address:</strong> {{ reservation.spot.lot.address }}</p>
+                            <p><i class="bi bi-123"></i> <strong>Spot ID:</strong> {{ reservation.spot_id }}</p>
+                            <p><i class="bi bi-clock"></i> <strong>Check In:</strong> {{ reservation.in_time.strftime('%Y-%m-%d %H:%M') }}</p>
+                            <p><i class="bi bi-cash-coin"></i> <strong>Rate:</strong> ${{ reservation.spot.lot.price }}/hour</p>
+                        </div>
+                        <form method="POST" action="{{ url_for('user_release_spot', reservation_id=reservation.id) }}">
+                            <button type="submit" class="btn btn-danger w-100" 
+                                    onclick="return confirm('Are you sure you want to release this parking spot?')">
+                                Release Spot
+                            </button>
+                        </form>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="lots-section">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3>Available Parking Areas</h3>
+            <div class="view-toggle-container">
+                <button type="button" class="btn btn-sm btn-primary active" data-view="grid" id="userGridViewBtn">
+                    <i class="bi bi-grid-3x3-gap-fill"></i> Grid View
+                </button>
+                <button type="button" class="btn btn-sm btn-outline" data-view="list" id="userListViewBtn">
+                    <i class="bi bi-list-ul"></i> List View
+                </button>
+            </div>
+        </div>
+        
+        {% if nearby_lots %}
+            <div class="lots-grid" data-current-view="grid">
+                {% for lot in nearby_lots %}
+                    <div class="lot-card">
+                        <div class="lot-header">
+                            <h4>{{ lot.location_name }}</h4>
+                            <div class="lot-availability">
+                                <span class="available-count">{{ lot.spots|selectattr('status', 'equalto', 'A')|list|length }}</span>
+                                <span>spots available</span>
+                            </div>
+                        </div>
+                        
+                        <div class="lot-info">
+                            <p><i class="bi bi-geo-alt"></i> <strong>Address:</strong> {{ lot.address }}</p>
+                            <p><i class="bi bi-pin-map"></i> <strong>Pincode:</strong> {{ lot.pincode }}</p>
+                            <p><i class="bi bi-cash-stack"></i> <strong>Price:</strong> ₹{{ lot.price }}/hour</p>
+                        </div>
+                        
+                        <div class="progress mb-3">
+                            <div class="progress-bar bg-success" 
+                                 style="width: {{ ((lot.spots|selectattr('status', 'equalto', 'A')|list|length / lot.max_spots) * 100) }}%">
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            {% if lot.spots|selectattr('status', 'equalto', 'A')|list|length > 0 %}
+                                <a href="{{ url_for('user_book_spot', lot_id=lot.id) }}" 
+                                   class="btn btn-primary">
+                                    Book Now
+                                </a>
+                            {% else %}
+                                <button class="btn btn-secondary" disabled>
+                                    No Spots Available
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                <h4>No parking areas found near you.</h4>
+                <p>All parking areas in your vicinity are currently occupied or unavailable. Please check back later.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const userGridViewBtn = document.getElementById('userGridViewBtn');
+        const userListViewBtn = document.getElementById('userListViewBtn');
+        const userLotsGrid = document.querySelector('.lots-grid');
+
+        // Load saved view preference
+        const savedUserView = localStorage.getItem('userLotView') || 'grid';
+        if (savedUserView === 'list') {
+            userLotsGrid.classList.remove('lots-grid');
+            userLotsGrid.classList.add('lots-list');
+            userListViewBtn.classList.add('active');
+            userGridViewBtn.classList.remove('active');
+        } else {
+            userLotsGrid.classList.remove('lots-list');
+            userLotsGrid.classList.add('lots-grid');
+            userGridViewBtn.classList.add('active');
+            userListViewBtn.classList.remove('active');
+        }
+
+        userGridViewBtn.addEventListener('click', function() {
+            userLotsGrid.classList.remove('lots-list');
+            userLotsGrid.classList.add('lots-grid');
+            userGridViewBtn.classList.add('active');
+            userListViewBtn.classList.remove('active');
+            localStorage.setItem('userLotView', 'grid');
+        });
+
+        userListViewBtn.addEventListener('click', function() {
+            userLotsGrid.classList.remove('lots-grid');
+            userLotsGrid.classList.add('lots-list');
+            userListViewBtn.classList.add('active');
+            userGridViewBtn.classList.remove('active');
+            localStorage.setItem('userLotView', 'list');
+        });
+    });
+
+    // Refresh the page every 30 seconds to get updated spot availability
+    setTimeout(function(){
+        window.location.reload(1);
+    }, 30000);
+</script>
+{% endblock %}
